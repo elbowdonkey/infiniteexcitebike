@@ -1,0 +1,36 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.3.2)
+    cookiejar (0.3.0)
+    em-http-request (1.0.3)
+      addressable (>= 2.2.3)
+      cookiejar
+      em-socksify
+      eventmachine (>= 1.0.0.beta.4)
+      http_parser.rb (>= 0.5.3)
+    em-socksify (0.2.1)
+      eventmachine (>= 1.0.0.beta.4)
+    em-websocket (0.3.8)
+      addressable (>= 2.1.1)
+      eventmachine (>= 0.12.9)
+    eventmachine (1.0.0.rc.4)
+    http_parser.rb (0.5.3)
+    json (1.5.1)
+    macaddr (1.6.1)
+      systemu (~> 2.5.0)
+    nokogiri (1.4.4)
+    systemu (2.5.2)
+    uuid (2.3.5)
+      macaddr (~> 1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  em-http-request (= 1.0.3)
+  em-websocket (= 0.3.8)
+  eventmachine (~> 1.0.0.rc.4)
+  json
+  nokogiri
+  uuid (~> 2.3.5)
