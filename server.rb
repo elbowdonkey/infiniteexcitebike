@@ -40,14 +40,15 @@ EM.run do
     connection.onclose { puts "closed" }
     connection.onerror { |e| puts "err #{e.inspect}" }
 
-    # EM.add_periodic_timer(0.0167) do
-    #   game.frame += 1
+    #EM.add_periodic_timer(0.0167) do
+    EM.add_periodic_timer(1.0) do
+      # game.frame += 1
 
-    #   if (game.frame > 32)
-    #     game.frame = 1
-    #   end
+      # if (game.frame > 32)
+      #   game.frame = 1
+      # end
 
-    #   connection.send({:coords => game.plot_circle, :offset => {:x => game.frame, :y => 0}}.to_json)
-    # end
+      connection.send({:advance => true}.to_json)
+    end
   end
 end

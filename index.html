@@ -9,102 +9,109 @@
     </style>
 
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js'></script>
+    <script type="text/javascript" src='javascript/simple_inheritance.js'></script>
+    <script type="text/javascript" src='javascript/websocket-client.js'></script>
+    <script type="text/javascript" src='javascript/input.js'></script>
+    <script type="text/javascript" src='javascript/game.js'></script>
+    <script type="text/javascript" src='javascript/player.js'></script>
   </head>
   <body>
-    <canvas id="c" width="640" height="480"></canvas>
+    <canvas id="game" width="640" height="480"></canvas>
 
     <script>
-      var ws;
-      $(document).ready(function() {
-        var counter = 0;
-        var background = new Image();
-        background.onload = function() {
-          drawBg(this, {x: 0, y: 0});
-        };
-        background.src = "images/bg.png";
+    var socket = new WebsocketClient();
 
-        ws = new WebSocket("ws://0.0.0.0:9000/");
+      // var ws;
+      // $(document).ready(function() {
+      //   var counter = 0;
+      //   var background = new Image();
+      //   background.onload = function() {
+      //     drawBg(this, {x: 0, y: 0});
+      //   };
+      //   background.src = "images/bg.png";
 
-        ws.onopen = function() {
-          console.log("socket connected");
-        };
+      //   ws = new WebSocket("ws://0.0.0.0:9000/");
 
-        ws.onerror = function(error) {
-          console.log(error);
-        };
+      //   ws.onopen = function() {
+      //     console.log("socket connected");
+      //   };
 
-        ws.onmessage = function(e) {
-          var data = eval("(" + e.data + ")");
-          // context.clearRect(0, 0, canvas.width, canvas.height);
-          // moveBall(data.coords);
-          // drawBg(background, data.offset);  
-          console.log(data);
-        };
+      //   ws.onerror = function(error) {
+      //     console.log(error);
+      //   };
 
-        ws.onclose = function() {
-          console.log("socket closed");
-        };
+      //   ws.onmessage = function(e) {
+      //     var data = eval("(" + e.data + ")");
+      //     // context.clearRect(0, 0, canvas.width, canvas.height);
+      //     // moveBall(data.coords);
+      //     // drawBg(background, data.offset);  
+      //     console.log(data);
+      //   };
 
-        var canvas = $("#c")[0];
-        var context = canvas.getContext("2d");
-        var centerX = canvas.width / 2;
-        var centerY = canvas.height / 2;
-        context.webkitImageSmoothingEnabled = false;
+      //   ws.onclose = function() {
+      //     console.log("socket closed");
+      //   };
 
-        drawTick = function(tick) {
-          context.font = "11pt Calibri";
-          context.fillText(tick, centerX, centerY);  
-        }
+      //   var canvas = $("#c")[0];
+      //   var context = canvas.getContext("2d");
+      //   var centerX = canvas.width / 2;
+      //   var centerY = canvas.height / 2;
+      //   context.webkitImageSmoothingEnabled = false;
 
-        moveBall = function(coords) {
-          if (coords) {
-            context.beginPath();
-            context.arc(coords[0], coords[1], 10, 0, 2 * Math.PI, false);
-            context.fillStyle = "#8ED6FF";
-            context.fill();  
-          }
-        };
+      //   drawTick = function(tick) {
+      //     context.font = "11pt Calibri";
+      //     context.fillText(tick, centerX, centerY);  
+      //   }
 
-        var paused = false;
-        $('body').keyup(function(k) {
-          if (k.which == 80) {
-            if (paused == false) {
-              console.log('game paused');
-              paused = true;
-              var cmd = JSON.stringify({type: "input", value: "pause"});
-              ws.send(cmd);
-            } else if (paused == true) {
-              console.log('game resumed');
-              paused = false;
-              var cmd = JSON.stringify({type: "input", value: "resume"});
-              ws.send(cmd);
-            }
-          }
-        });
+      //   moveBall = function(coords) {
+      //     if (coords) {
+      //       context.beginPath();
+      //       context.arc(coords[0], coords[1], 10, 0, 2 * Math.PI, false);
+      //       context.fillStyle = "#8ED6FF";
+      //       context.fill();  
+      //     }
+      //   };
+
+      //   var paused = false;
+      //   $('body').keyup(function(k) {
+      //     if (k.which == 80) {
+      //       if (paused == false) {
+      //         console.log('game paused');
+      //         paused = true;
+      //         var cmd = JSON.stringify({type: "input", value: "pause"});
+      //         ws.send(cmd);
+      //       } else if (paused == true) {
+      //         console.log('game resumed');
+      //         paused = false;
+      //         var cmd = JSON.stringify({type: "input", value: "resume"});
+      //         ws.send(cmd);
+      //       }
+      //     }
+      //   });
 
 
-        var scrollX = 0;
-        drawBg = function(image,offset) {
-          var sx = 0;
-          var sy = 0;
-          var sWidth = 32;
-          var sHeight = 352;
-          var dx = 0;
-          var dy = 0;
-          var dWidth = 32;
-          var dHeight = 352;
-          var screenWidth = canvas.width/sWidth;
+      //   var scrollX = 0;
+      //   drawBg = function(image,offset) {
+      //     var sx = 0;
+      //     var sy = 0;
+      //     var sWidth = 32;
+      //     var sHeight = 352;
+      //     var dx = 0;
+      //     var dy = 0;
+      //     var dWidth = 32;
+      //     var dHeight = 352;
+      //     var screenWidth = canvas.width/sWidth;
 
-          if (offset.x % 32 == 0) {
-            scrollX += 1;
-          }
+      //     if (offset.x % 32 == 0) {
+      //       scrollX += 1;
+      //     }
 
-          for (var x = scrollX; x < screenWidth;x++) {
-            dx = (sWidth * x) - offset.x;
-            context.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-          };
-        };
-      });
+      //     for (var x = scrollX; x < screenWidth;x++) {
+      //       dx = (sWidth * x) - offset.x;
+      //       context.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+      //     };
+      //   };
+      // });
     </script>
   </body>
 </html>

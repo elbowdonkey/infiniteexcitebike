@@ -6,7 +6,6 @@ class Player
   end
 
   def initialize(options={})
-    puts "creating a new player"
     @connection = options[:connection] || nil
     @game = options[:game]
     @signature = @connection.signature
@@ -17,7 +16,7 @@ class Player
 
   def generate_client_id
     @client_id = UUID.new.generate
-    response = {:client_id => @client_id}
+    response = {:signature => @signature, :client_id => @client_id}
     @connection.send(response.to_json)
   end
 
