@@ -1,23 +1,23 @@
 class Player
-  attr_accessor :connection, :game, :client_id, :signature, :position
-
-  def self.find(client_id, game)
-    game.players.detect{|player| player.client_id == client_id}
-  end
+  attr_accessor :connection, :game, :client_id, :signature, :position, :clock
 
   def initialize(options={})
     @connection = options[:connection] || nil
     @game = options[:game]
     @signature = @connection.signature
     @position = {x: 0, y: 0}
-
-    generate_client_id
+    @client_id = options[:client_id]
+    @clock = 0
   end
 
-  def generate_client_id
-    @client_id = UUID.new.generate
-    response = {:signature => @signature, :client_id => @client_id}
-    @connection.send(response.to_json)
+  def to_hash
+    @position = plot_circle # for fun!
+    {
+      game_id:   @game.object_id,
+      client_id: @client_id,
+      signature: @signature,
+      position:  @position
+    }
   end
 
   def apply_throttle
@@ -34,5 +34,22 @@ class Player
 
   def lane_down
     "lane down"
+  end
+
+  def send_message(message)
+    connection.send(message.to_json)
+  end
+
+  def plot_circle
+    cx = 640/2
+    cy = 480/2
+    rad = 150
+    speed = 2
+    speed_scale = (0.001*2*Math::PI)/speed
+
+    angle = @clock * speed_scale
+    x = cx + Math.sin(angle) * rad
+    y = cy + Math.cos(angle) * rad
+    {:x => x, :y => y}
   end
 end

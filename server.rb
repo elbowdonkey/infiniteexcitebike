@@ -11,44 +11,48 @@ require_relative 'game.rb'
 require_relative 'player.rb'
 
 counter = 0
+frame_length = 0.033 #1.0 #0.0167 # == 60 fps
+
 EM.run do
-  puts "Server started on 0.0.0.0:9000"
   game = Game.new
-
   EM::WebSocket.start(:host => '0.0.0.0', :port => 9000) do |connection|
-    game.connection = connection
+    game.connections << connection
 
-    connection.onopen do
-      player = game.add_player
-    end
-
-    connection.onmessage do |message|
-      game.process_input(JSON.parse(message))
-
-      game.callback do |response|
-        connection.send(response.to_json)
+    game.connections.each do |connection|
+      connection.onopen do
+        game.add_player(connection)
       end
+
+      connection.onmessage do |message|
+        game.process_input(connection,JSON.parse(message))
+
+        game.callback do |response|
+          connection.send(response.to_json)
+        end
+      end
+
+      connection.onclose { puts "closed" }
+      connection.onerror { |e| puts "err #{e.inspect}" }  
     end
 
-    # game.players.each do |player|
-    #   EM.add_periodic_timer(1.0) do
-    #     puts "saying hi..."
-    #     connection.send("Player #{player.signature} says hi.")
-    #   end
-    # end
+    EM.add_periodic_timer(frame_length) do
+      game.frame += 1
 
-    connection.onclose { puts "closed" }
-    connection.onerror { |e| puts "err #{e.inspect}" }
+      players = {}
 
-    #EM.add_periodic_timer(0.0167) do
-    EM.add_periodic_timer(1.0) do
-      # game.frame += 1
+      game.players.each do |player|
+        player.clock += 1
+        players[player.client_id] = player.to_hash
+      end
 
-      # if (game.frame > 32)
-      #   game.frame = 1
-      # end
+      message = {
+        :advance => true,
+        :game => {
+          :players => players
+        }
+      }
 
-      connection.send({:advance => true}.to_json)
+      game.broadcast(message);
     end
   end
 end

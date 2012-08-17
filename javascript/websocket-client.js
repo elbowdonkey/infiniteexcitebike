@@ -1,12 +1,3 @@
-Function.prototype.bind = function(){
-  var fn = this, args = Array.prototype.slice.call(arguments),
-    object = args.shift();
-  return function(){
-    return fn.apply(object,
-      args.concat(Array.prototype.slice.call(arguments)));
-  };
-};
-
 var WebsocketClient = Class.extend({
   player: null,
   init: function() {
@@ -24,7 +15,30 @@ var WebsocketClient = Class.extend({
   },
 
   setupPlayer: function(settings) {
-    this.player = new Player(settings);
+    if (this.game.player == null && settings.client_id != undefined) {
+      this.game.player = new Player(this.game,settings);
+    }
+  },
+
+  setupOtherPlayers: function(settings) {
+    var gameData = settings.game;
+    if (gameData == undefined) {
+      return;
+    }
+
+    var others = gameData.players || null;
+    if (others == null) {
+      return;
+    }
+
+    if (others.length > 1) {
+      for (var i = others.length - 1; i >= 0; i--) {
+        var other = others[i];
+        if (this.otherPlayers[other.client_id] == undefined && other.client_id != this.player.client_id) {
+          this.otherPlayers[other.client_id] = new OtherPlayer(this.game,other);
+        }
+      };
+    }
   },
 
   _onopen: function() {
@@ -38,15 +52,25 @@ var WebsocketClient = Class.extend({
   _onmessage: function(message) {
     var data = JSON.parse(message.data);
 
-    if (this.player == null && data.client_id != undefined) {
-      this.setupPlayer(data);
+    if (data.client_id) {
+      this.setupPlayer(data);      
     }
-
+    
     if (data.advance) {
-      this.game.update();
+      this.game.update(data);
     }
 
-    console.log(message, data);
+    // this.setupPlayer(data);
+    // this.setupOtherPlayers(data);
+
+    // if (data.advance) {
+    //   this.game.update(data);
+    // }
+
+    // if (data.player) {
+    //   this.setupPlayer(data);
+    //   this.game.update(data);
+    // }
   },
 
   _onclose: function() {

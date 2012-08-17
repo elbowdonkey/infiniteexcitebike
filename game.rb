@@ -1,16 +1,16 @@
 class Game
   include EM::Deferrable
-  attr_accessor :connection, :players, :frame, :points, :paused
+  attr_accessor :players, :frame, :points, :paused, :connections
 
   def initialize(options={})
-    puts "creating a new game object"
+    @connections = options[:connections] || []
     @players = options[:players] || []
     @frame = 0
     @paused = false
   end
 
-  def process_input(message)
-    player = Player.find(message["client_id"], self)
+  def process_input(connection, message)
+    player = find_player(connection)
 
     case message["input"]
       when "throttle"
@@ -27,30 +27,26 @@ class Game
 
     end
 
-    results = {
-      :position => player.position
-    }
-
-    succeed(results)
+    succeed(player.to_hash)
   end
 
-  def add_player
-    player = Player.new(:connection => @connection, :game => self)
+  def add_player(connection)
+    player = Player.new(:game => self, :client_id => UUID.new.generate, :connection => connection)
     @players << player
-    @connection.send({:players => @players.collect {|p| {:client_id => p.client_id}}}.to_json)
-    player
+
+    player.send_message(player.to_hash)
+    #broadcast({:players => @players.collect {|p| p.to_hash }})
   end
 
-  def plot_circle
-    cx = 640/2
-    cy = 480/2
-    rad = 200
-    speed = 0.5
-    speed_scale = (0.001*2*Math::PI)/speed
+  def find_player(connection)
+    return @players.detect do |p|
+      p.signature == connection.signature
+    end
+  end
 
-    angle = @frame * speed_scale
-    x = cx + Math.sin(angle) * rad
-    y = cy + Math.cos(angle) * rad
-    [x,y]
+  def broadcast(message)
+    @players.each do |player|
+      player.send_message message
+    end
   end
 end

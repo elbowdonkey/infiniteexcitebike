@@ -1,9 +1,9 @@
-var Player = Class.extend({
+var OtherPlayer = Class.extend({
   spriteSheet: new Image(),
 
   init: function(game, settings) {
 
-    this.spriteSheet.src = "images/bikes2.png";
+    this.spriteSheet.src = "images/bikes_green.png";
     this.spriteSheet.onload = this.draw.bind(this);
 
     this.position = settings.position || {x: 0, y: 0};
@@ -37,10 +37,10 @@ var Player = Class.extend({
     var destinationHeight = spriteHeight * 2;
 
     // assuming the elements in the animation array represent positions, rotate through each element for each draw
-    // var frame = this.animation.shift();
-    // this.animation.push(frame);
+    var frame = this.animation.shift();
+    this.animation.push(frame);
 
-    // spriteX = spriteX + (spriteWidth * frame);
+    spriteX = spriteX + (spriteWidth * frame);
     this.game.context.drawImage(this.spriteSheet, spriteX, spriteY, spriteWidth, spriteHeight, destinationX, destinationY, destinationWidth, destinationHeight);
   },
 });

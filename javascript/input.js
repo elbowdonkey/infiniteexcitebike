@@ -24,10 +24,7 @@ var Input = Class.extend({
   keydown: function( event ) {
     if( event.target.type == 'text' ) { return; }
     
-    var code = event.type == 'keydown' 
-      ? event.keyCode 
-      : (event.button == 2 ? ig.KEY.MOUSE2 : ig.KEY.MOUSE1);
-      
+    var code = event.keyCode
     var action = this.bindings[code];
     if( action ) {
       this.actions[action] = true;
@@ -40,14 +37,10 @@ var Input = Class.extend({
     }
   },
   
-  
   keyup: function( event ) {
     if( event.target.type == 'text' ) { return; }
     
-    var code = event.type == 'keyup' 
-      ? event.keyCode 
-      : (event.button == 2 ? ig.KEY.MOUSE2 : ig.KEY.MOUSE1);
-    
+    var code = event.keyCode
     var action = this.bindings[code];
     if( action ) {
       this.delayedKeyup[action] = true;
@@ -66,7 +59,6 @@ var Input = Class.extend({
     this.delayedKeyup[action] = true;
     this.bindings[key] = null;
   },
-  
   
   state: function( action ) {
     return this.actions[action];
