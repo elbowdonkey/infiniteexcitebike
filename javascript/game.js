@@ -1,13 +1,14 @@
 var Game = Class.extend({
   background: new Image(),
   others: {},
+  offset: {x: 0, y: 0},
+  serverQueue: [],
+  clock: null,
 
   init: function() {
     this.canvas = $('#game');
     this.context = this.canvas[0].getContext("2d");
     this.context.webkitImageSmoothingEnabled = false;
-
-    //this.background.onload = this.drawBg.bind(this);
 
     this.screen = {
       width: this.canvas.width(),
@@ -19,26 +20,58 @@ var Game = Class.extend({
     }
 
     this.background.src = "images/bg.png";
-    this.input = new Input();
-    this.input.bind( KEY.UP_ARROW, 'jump' );
+
+    this.clock = setInterval( this.processQueue.bind(this), 500 );
+  },
+
+  processQueue: function() {
+    var data;
+
+    if (this.player == undefined) {
+      // grab the first message with our client_id
+      data = this.serverQueue.shift();
+    } else {
+      // grab the newest message
+      data = this.serverQueue.pop();
+    }
+    
+    if (data) {
+      if (data.client_id) {
+        this.setupPlayer(data);
+        return;
+      }
+    } else {
+      //clearInterval(this.clock);
+    }
+
+    this.update(data);
   },
 
   update: function(serverData) {
-    if (this.input.state('jump')) console.log('jump!');
-    this.input.clearPressed();
+    if (serverData) {
+      console.log(serverData);
+      this.player.update(this.getPlayerData(serverData));
+      this.addOthers(serverData);
+      this.updateOthers(serverData);
+    } else {
+      this.player.update();
+    }
 
-    this.player.update(this.getPlayerData(serverData));
-    this.addOthers(serverData);
-    this.updateOthers(serverData);
     this.clear();
+    //this.drawBg();
     this.player.draw();
     this.drawOthers();
     this.draw();
-    
   },
 
   clear: function() {
     this.context.clearRect(0, 0, this.screen.width, this.screen.height);
+  },
+
+  setupPlayer: function(settings) {
+    if (this.player == null && settings.client_id != undefined) {
+      this.player = new Player(this,settings);
+    }
   },
 
   getPlayerData: function(serverData) {
@@ -71,6 +104,18 @@ var Game = Class.extend({
   },
 
   drawBg: function() {
+    this.clear();
+    var pattern = this.context.createPattern(this.background,'repeat-x');
+    this.context.fillStyle = pattern;
+    this.context.fillRect(0,0,640,352);
+    this.context.translate(-this.offset.x, 0);
+
+    // var imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    // var data = imageData.data;
+    // this.context.putImageData(imageData, -this.offset.x, 0);
+  },
+
+  x_drawBg: function() {
     var spriteX = 0;
     var spriteY = 0;
     var spriteWidth = 32;

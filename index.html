@@ -20,6 +20,10 @@
             args.concat(Array.prototype.slice.call(arguments)));
         };
       };
+
+      Number.prototype.limit = function(min, max) {
+        return Math.min(max, Math.max(min, this));
+      };
     </script>
 
     <script type="text/javascript" src='javascript/websocket-client.js'></script>
@@ -32,99 +36,7 @@
     <canvas id="game" width="640" height="480"></canvas>
 
     <script>
-    var socket = new WebsocketClient();
-
-      // var ws;
-      // $(document).ready(function() {
-      //   var counter = 0;
-      //   var background = new Image();
-      //   background.onload = function() {
-      //     drawBg(this, {x: 0, y: 0});
-      //   };
-      //   background.src = "images/bg.png";
-
-      //   ws = new WebSocket("ws://0.0.0.0:9000/");
-
-      //   ws.onopen = function() {
-      //     console.log("socket connected");
-      //   };
-
-      //   ws.onerror = function(error) {
-      //     console.log(error);
-      //   };
-
-      //   ws.onmessage = function(e) {
-      //     var data = eval("(" + e.data + ")");
-      //     // context.clearRect(0, 0, canvas.width, canvas.height);
-      //     // moveBall(data.coords);
-      //     // drawBg(background, data.offset);  
-      //     console.log(data);
-      //   };
-
-      //   ws.onclose = function() {
-      //     console.log("socket closed");
-      //   };
-
-      //   var canvas = $("#c")[0];
-      //   var context = canvas.getContext("2d");
-      //   var centerX = canvas.width / 2;
-      //   var centerY = canvas.height / 2;
-      //   context.webkitImageSmoothingEnabled = false;
-
-      //   drawTick = function(tick) {
-      //     context.font = "11pt Calibri";
-      //     context.fillText(tick, centerX, centerY);  
-      //   }
-
-      //   moveBall = function(coords) {
-      //     if (coords) {
-      //       context.beginPath();
-      //       context.arc(coords[0], coords[1], 10, 0, 2 * Math.PI, false);
-      //       context.fillStyle = "#8ED6FF";
-      //       context.fill();  
-      //     }
-      //   };
-
-      //   var paused = false;
-      //   $('body').keyup(function(k) {
-      //     if (k.which == 80) {
-      //       if (paused == false) {
-      //         console.log('game paused');
-      //         paused = true;
-      //         var cmd = JSON.stringify({type: "input", value: "pause"});
-      //         ws.send(cmd);
-      //       } else if (paused == true) {
-      //         console.log('game resumed');
-      //         paused = false;
-      //         var cmd = JSON.stringify({type: "input", value: "resume"});
-      //         ws.send(cmd);
-      //       }
-      //     }
-      //   });
-
-
-      //   var scrollX = 0;
-      //   drawBg = function(image,offset) {
-      //     var sx = 0;
-      //     var sy = 0;
-      //     var sWidth = 32;
-      //     var sHeight = 352;
-      //     var dx = 0;
-      //     var dy = 0;
-      //     var dWidth = 32;
-      //     var dHeight = 352;
-      //     var screenWidth = canvas.width/sWidth;
-
-      //     if (offset.x % 32 == 0) {
-      //       scrollX += 1;
-      //     }
-
-      //     for (var x = scrollX; x < screenWidth;x++) {
-      //       dx = (sWidth * x) - offset.x;
-      //       context.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-      //     };
-      //   };
-      // });
+      var socket = new WebsocketClient();
     </script>
   </body>
 </html>
