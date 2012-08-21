@@ -3,11 +3,11 @@ class Player
 
   def initialize(options={})
     @connection = options[:connection] || nil
-    @game = options[:game]
-    @signature = @connection.signature
-    @position = {x: 0, y: 0}
-    @client_id = options[:client_id]
-    @clock = 0
+    @game       = options[:game]
+    @signature  = @connection.signature
+    @position   = {x: 0, y: 0}
+    @client_id  = options[:client_id]
+    @clock      = 0
   end
 
   def to_hash
@@ -41,15 +41,16 @@ class Player
   end
 
   def plot_circle
-    cx = 640/2
-    cy = 480/2
-    rad = 150
+    cx    = 640/2
+    cy    = 480/2
+    rad   = 150
     speed = 2
-    speed_scale = (0.001*2*Math::PI)/speed
+    scale = (0.001*2*Math::PI)/speed
 
-    angle = @clock * speed_scale
-    x = cx + Math.sin(angle) * rad
-    y = cy + Math.cos(angle) * rad
+    a = @clock * scale
+    x = cx + Math.sin(a) * rad
+    y = cy + Math.cos(a) * rad
+    
     {:x => x, :y => y}
   end
 end

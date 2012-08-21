@@ -4,26 +4,26 @@ class Game
 
   def initialize(options={})
     @connections = options[:connections] || []
-    @players = options[:players] || []
-    @frame = 0
-    @paused = false
+    @players     = options[:players] || []
+    @frame       = 0
+    @paused      = false
   end
 
   def process_input(connection, message)
     player = find_player(connection)
 
     case message["input"]
-      when "throttle"
-        player.apply_throttle
+    when "throttle"
+      player.apply_throttle
 
-      when "brake"
-        player.apply_brake
+    when "brake"
+      player.apply_brake
 
-      when "up"
-        player.lane_up
+    when "up"
+      player.lane_up
 
-      when "down"
-        player.lane_down
+    when "down"
+      player.lane_down
 
     end
 
