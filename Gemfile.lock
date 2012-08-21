@@ -3,6 +3,7 @@ GEM
   specs:
     addressable (2.3.2)
     cookiejar (0.3.0)
+    daemons (1.1.9)
     em-http-request (1.0.3)
       addressable (>= 2.2.3)
       cookiejar
@@ -20,7 +21,12 @@ GEM
     macaddr (1.6.1)
       systemu (~> 2.5.0)
     nokogiri (1.4.4)
+    rack (1.4.1)
     systemu (2.5.2)
+    thin (1.4.1)
+      daemons (>= 1.0.9)
+      eventmachine (>= 0.12.6)
+      rack (>= 1.0.0)
     uuid (2.3.5)
       macaddr (~> 1.0)
 
@@ -33,4 +39,5 @@ DEPENDENCIES
   eventmachine (~> 1.0.0.rc.4)
   json
   nokogiri
+  thin
   uuid (~> 2.3.5)
