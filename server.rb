@@ -18,15 +18,20 @@ frame_length = 0.033 #1.0 #0.0167 # == 60 fps
 
 EM.run do
   game = Game.new
+
+  EM.start_server('0.0.0.0', 3000, ContentHandler)
+
   EM::WebSocket.start(:host => '0.0.0.0', :port => 9000) do |connection|
     game.connections << connection
 
     game.connections.each do |connection|
       connection.onopen do
+        puts "New connection: #{connection.signature}"
         game.add_player(connection)
       end
 
       connection.onmessage do |message|
+        puts "Received input."
         game.process_input(connection,JSON.parse(message))
 
         game.callback do |response|
