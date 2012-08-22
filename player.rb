@@ -11,7 +11,7 @@ class Player
   end
 
   def to_hash
-    @position = plot_circle # for fun!
+    #@position = plot_circle # uncomment for fun!
     {
       game_id:   @game.object_id,
       client_id: @client_id,
@@ -50,7 +50,7 @@ class Player
     a = @clock * scale
     x = cx + Math.sin(a) * rad
     y = cy + Math.cos(a) * rad
-    
+
     {:x => x, :y => y}
   end
 end

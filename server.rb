@@ -11,6 +11,8 @@ require 'pp'
 require_relative 'http_server.rb'
 require_relative 'request_parser.rb'
 require_relative 'game.rb'
+require_relative 'hurdle.rb'
+require_relative 'track.rb'
 require_relative 'player.rb'
 
 counter = 0
@@ -40,23 +42,29 @@ EM.run do
       end
 
       connection.onclose { puts "closed" }
-      connection.onerror { |e| puts "err #{e.inspect}" }  
+      connection.onerror { |e| puts "err #{e.inspect}" }
     end
 
     EM.add_periodic_timer(frame_length) do
-      game.frame += 1
+      game.advance_frames
 
       players = {}
+      hurdles = {}
 
       game.players.each do |player|
-        player.clock += 1
+        #player.clock += 1
         players[player.client_id] = player.to_hash
+      end
+
+      game.track.hurdles.each do |hurdle|
+        hurdles[hurdle.object_id] = hurdle.to_hash
       end
 
       message = {
         :advance => true,
         :game => {
-          :players => players
+          :players => players,
+          :hurdles => hurdles
         }
       }
 

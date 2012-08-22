@@ -1,12 +1,16 @@
 class Game
   include EM::Deferrable
-  attr_accessor :players, :frame, :points, :paused, :connections
+  attr_accessor :players, :frame, :connections, :track
 
   def initialize(options={})
     @connections = options[:connections] || []
-    @players     = options[:players] || []
+    @players     = options[:players]     || []
+    @track       = Track.new
     @frame       = 0
-    @paused      = false
+  end
+
+  def advance_frames
+    @frame += 1
   end
 
   def process_input(connection, message)

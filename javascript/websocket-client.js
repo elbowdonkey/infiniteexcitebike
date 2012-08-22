@@ -53,24 +53,12 @@ var WebsocketClient = Class.extend({
     var data = JSON.parse(message.data);
 
     if (data.client_id) {
-      this.setupPlayer(data);      
+      this.setupPlayer(data);
     }
-    
+
     if (data.advance) {
       this.game.update(data);
     }
-
-    // this.setupPlayer(data);
-    // this.setupOtherPlayers(data);
-
-    // if (data.advance) {
-    //   this.game.update(data);
-    // }
-
-    // if (data.player) {
-    //   this.setupPlayer(data);
-    //   this.game.update(data);
-    // }
   },
 
   _onclose: function() {

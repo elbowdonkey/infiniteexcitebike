@@ -1,11 +1,13 @@
 var Game = Class.extend({
   background: new Image(),
   others: {},
+  track: {hurdles: {}},
 
   init: function() {
     this.canvas = $('#game');
     this.context = this.canvas[0].getContext("2d");
     this.context.webkitImageSmoothingEnabled = false;
+
 
     //this.background.onload = this.drawBg.bind(this);
 
@@ -29,12 +31,13 @@ var Game = Class.extend({
 
     this.player.update(this.getPlayerData(serverData));
     this.addOthers(serverData);
+    this.addHurdles(serverData);
     this.updateOthers(serverData);
     this.clear();
     this.player.draw();
     this.drawOthers();
     this.draw();
-    
+
   },
 
   clear: function() {
@@ -43,6 +46,15 @@ var Game = Class.extend({
 
   getPlayerData: function(serverData) {
     return serverData.game.players[this.player.client_id];
+  },
+
+  addHurdles: function(serverData) {
+    for (hurdle_id in serverData.game.hurdles) {
+      if (this.track.hurdles[hurdle_id] == undefined) {
+        var hurdle_deets = serverData.game.hurdles[hurdle_id];
+        this.track.hurdles[hurdle_id] = new Hurdle(this, hurdle_deets);
+      }
+    }
   },
 
   addOthers: function(serverData) {
