@@ -35,6 +35,7 @@ var Game = Class.extend({
     this.updateOthers(serverData);
     this.clear();
     this.player.draw();
+    this.drawHurdles();
     this.drawOthers();
     this.draw();
 
@@ -52,7 +53,8 @@ var Game = Class.extend({
     for (hurdle_id in serverData.game.hurdles) {
       if (this.track.hurdles[hurdle_id] == undefined) {
         var hurdle_deets = serverData.game.hurdles[hurdle_id];
-        this.track.hurdles[hurdle_id] = new Hurdle(this, hurdle_deets);
+        var hurdleKind = eval(hurdle_deets["kind"])
+        this.track.hurdles[hurdle_id] = new hurdleKind(this, hurdle_deets);
       }
     }
   },
@@ -69,6 +71,12 @@ var Game = Class.extend({
   updateOthers: function(serverData) {
     for (other_client_id in this.others) {
       this.others[other_client_id].update(serverData.game.players[other_client_id]);
+    }
+  },
+
+  drawHurdles: function() {
+    for (hurdle_id in this.track.hurdles) {
+      this.track.hurdles[hurdle_id].draw();
     }
   },
 

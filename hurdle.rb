@@ -3,14 +3,17 @@ class Hurdle
 
   def initialize(options={})
     @position ||= options[:position]
+    @kind = self.class
   end
 
   def to_hash
     {
-      id:      object_id,
-      game_id: @game.object_id,
-      width:   @width,
-      curves:  @curves
+      id:       object_id,
+      game_id:  @game.object_id,
+      width:    @width,
+      curves:   @curves,
+      position: @position,
+      kind:     @kind
     }
   end
 end

@@ -22,7 +22,7 @@ class Track
 
   def next_pos_hurdle_pos
     {
-      x: @hurdles.last.position[:x] + 60,
+      x: @hurdles.last.position[:x] + 80,
       y: @hurdles.last.position[:y]
     }
   end
