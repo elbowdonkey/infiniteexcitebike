@@ -2,7 +2,7 @@ class Hurdle
   attr_accessor :position, :kind, :width, :curves
 
   def initialize(options={})
-    @position     ||= options[:position]
+    @position ||= options[:position]
   end
 
   def to_hash

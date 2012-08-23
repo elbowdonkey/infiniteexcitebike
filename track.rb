@@ -8,12 +8,22 @@ class Track
   end
 
   def spawn_random_hurdle
-  	@@hurdle_types.sample.new
+    position = {x: 0, y: 0} if @hurdles.length == 0
+    position =  next_pos_hurdle_pos if @hurdles.length > 0
+
+  	@@hurdle_types.sample.new(position: position)
   end
 
   def spawn_starting_hurdles
   	10.times do
   		@hurdles << spawn_random_hurdle
   	end
+  end
+
+  def next_pos_hurdle_pos
+    {
+      x: @hurdles.last.position[:x] + 60,
+      y: @hurdles.last.position[:y]
+    }
   end
 end
