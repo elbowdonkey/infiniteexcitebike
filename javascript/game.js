@@ -9,7 +9,7 @@ var Game = Class.extend({
     this.context.webkitImageSmoothingEnabled = false;
 
 
-    //this.background.onload = this.drawBg.bind(this);
+    this.background.onload = this.drawBg.bind(this);
 
     this.screen = {
       width: this.canvas.width(),
@@ -29,16 +29,15 @@ var Game = Class.extend({
     if (this.input.state('jump')) console.log('jump!');
     this.input.clearPressed();
 
+    this.updateEntities(serverData);
+    this.draw();
+  },
+
+  updateEntities: function(serverData) {
     this.player.update(this.getPlayerData(serverData));
     this.addOthers(serverData);
     this.addHurdles(serverData);
     this.updateOthers(serverData);
-    this.clear();
-    this.player.draw();
-    this.drawHurdles();
-    this.drawOthers();
-    this.draw();
-
   },
 
   clear: function() {
@@ -87,7 +86,11 @@ var Game = Class.extend({
   },
 
   draw: function() {
-    //this.drawBg();
+    this.clear();
+    this.drawBg();
+    this.drawHurdles();
+    this.drawOthers();
+    this.player.draw();
   },
 
   drawBg: function() {

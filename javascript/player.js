@@ -27,7 +27,6 @@ var Player = Class.extend({
   },
 
   draw: function() {
-    return;
     var spriteX = 0;
     var spriteY = 0;
     var spriteWidth = 26;

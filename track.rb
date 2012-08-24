@@ -22,8 +22,16 @@ class Track
 
   def next_pos_hurdle_pos
     {
-      x: @hurdles.last.position[:x] + 80,
+      x: @hurdles.last.position[:x] + 100,
       y: @hurdles.last.position[:y]
     }
+  end
+
+  def hurdles_to_hash
+    hash = {}
+    @hurdles.each do |hurdle|
+      hash[hurdle.id] = hurdle.to_hash
+    end
+    return hash
   end
 end

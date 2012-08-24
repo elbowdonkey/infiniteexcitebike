@@ -16,7 +16,7 @@ require_relative 'track.rb'
 require_relative 'player.rb'
 
 counter = 0
-frame_length = 0.033 #1.0 #0.0167 # == 60 fps
+frame_length = 1.0 #0.033 #1.0 #0.0167 # == 60 fps
 
 EM.run do
   game = Game.new
@@ -56,15 +56,11 @@ EM.run do
         players[player.client_id] = player.to_hash
       end
 
-      game.track.hurdles.each do |hurdle|
-        hurdles[hurdle.object_id] = hurdle.to_hash
-      end
-
       message = {
         :advance => true,
         :game => {
           :players => players,
-          :hurdles => hurdles
+          :hurdles => game.track.hurdles_to_hash
         }
       }
 

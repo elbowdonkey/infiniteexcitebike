@@ -6,9 +6,13 @@ class Hurdle
     @kind = self.class
   end
 
+  def id
+    "hurdle_#{@position[:x]}_#{object_id}"
+  end
+
   def to_hash
     {
-      id:       object_id,
+      id:       id,
       game_id:  @game.object_id,
       width:    @width,
       curves:   @curves,
