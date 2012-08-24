@@ -21,7 +21,7 @@ class Player
   end
 
   def apply_throttle
-    "throttle applied"
+    p "throttle applied"
   end
 
   def apply_brake

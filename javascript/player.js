@@ -20,10 +20,23 @@ var Player = Class.extend({
 
     // TODO: depending on player input, change animation
     this.animation = this.animations.idle;
+
+    this.input = new Input();
+    this.input.bind( KEY.RIGHT_ARROW, 'right' );
+    this.input.bind( KEY.LEFT_ARROW, 'left' );
   },
 
   update: function(serverData) {
+    this.handleInputs();
+
     this.position = serverData.position;
+  },
+
+  handleInputs: function() {
+    if (this.input.state('right')) {
+      console.log('input here');
+      socket.connection.send(JSON.stringify({input: "right"}));
+    }
   },
 
   draw: function() {

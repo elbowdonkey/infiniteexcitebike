@@ -17,10 +17,10 @@ class Game
     player = find_player(connection)
 
     case message["input"]
-    when "throttle"
+    when "right"
       player.apply_throttle
 
-    when "brake"
+    when "left"
       player.apply_brake
 
     when "up"

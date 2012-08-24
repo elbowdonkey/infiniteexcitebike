@@ -57,7 +57,6 @@ var WebsocketClient = Class.extend({
     }
 
     if (data.advance) {
-      console.log(data);
       this.game.update(data);
     }
   },
