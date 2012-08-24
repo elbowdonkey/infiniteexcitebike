@@ -23,6 +23,9 @@ class Game
     when "left"
       player.apply_brake
 
+    when "coast"
+      player.coast
+
     when "up"
       player.lane_up
 

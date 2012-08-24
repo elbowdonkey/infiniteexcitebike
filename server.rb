@@ -16,7 +16,7 @@ require_relative 'track.rb'
 require_relative 'player.rb'
 
 counter = 0
-frame_length = 1.0 #0.033 #1.0 #0.0167 # == 60 fps
+frame_length = 0.033 #0.033 #1.0 #0.0167 # == 60 fps
 
 EM.run do
   game = Game.new
@@ -33,7 +33,6 @@ EM.run do
       end
 
       connection.onmessage do |message|
-        puts "Received input."
         game.process_input(connection,JSON.parse(message))
 
         game.callback do |response|
@@ -53,6 +52,7 @@ EM.run do
 
       game.players.each do |player|
         #player.clock += 1
+        #player.set_new_position(:coast)
         players[player.client_id] = player.to_hash
       end
 

@@ -1,6 +1,6 @@
 var Player = Class.extend({
   spriteSheet: new Image(),
-
+  throttleLevel: 0,
   init: function(game, settings) {
 
     this.spriteSheet.src = "images/bikes2.png";
@@ -28,14 +28,18 @@ var Player = Class.extend({
 
   update: function(serverData) {
     this.handleInputs();
-
+    this.throttleLevel = serverData.throttle.level;
+    console.log(this.throttleLevel);
     this.position = serverData.position;
   },
 
   handleInputs: function() {
     if (this.input.state('right')) {
-      console.log('input here');
       socket.connection.send(JSON.stringify({input: "right"}));
+    } else {
+      if (this.throttleLevel > 0) {
+        socket.connection.send(JSON.stringify({input: "coast"}));
+      }
     }
   },
 
