@@ -29,7 +29,10 @@ var Player = Class.extend({
   update: function(serverData) {
     this.handleInputs();
     this.throttleLevel = serverData.throttle.level;
-    console.log(this.throttleLevel);
+    if (serverData.atHurdle) {
+      console.log(serverData.atHurdle);
+    }
+
     this.position = serverData.position;
   },
 
@@ -48,7 +51,7 @@ var Player = Class.extend({
     var spriteY = 0;
     var spriteWidth = 26;
     var spriteHeight = 26;
-    var destinationX = this.position.x;
+    var destinationX = this.position.x-26;
     var destinationY = this.position.y;
     var destinationWidth = spriteWidth * 2;
     var destinationHeight = spriteHeight * 2;

@@ -16,7 +16,7 @@ require_relative 'track.rb'
 require_relative 'player.rb'
 
 counter = 0
-frame_length = 0.033 #0.033 #1.0 #0.0167 # == 60 fps
+frame_length = 0.03 #0.033 #0.033 #1.0 #0.0167 # == 60 fps
 
 EM.run do
   game = Game.new

@@ -7,17 +7,20 @@ class Integer
 end
 
 class Player
+  @@ground_pos_y = 240
   attr_accessor :connection, :game, :client_id, :signature, :position, :clock, :lane,
-                :throttle_level, :throttle_counter, :throttle_steps
+                :throttle_level, :throttle_counter, :throttle_steps,
+                :at_hurdle, :current_hurdle_path
 
   def initialize(options={})
     @connection = options[:connection] || nil
     @game       = options[:game]
     @signature  = @connection.signature
-    @position   = {x: 0, y: 0}
+    @position   = {x: 0, y: @@ground_pos_y}
     @lane       = options[:lane] || 2
     @client_id  = options[:client_id]
     @clock      = 0
+    @at_hurdle  = false
 
     @throttle_level   = 0
     @throttle_counter = 0
@@ -35,7 +38,8 @@ class Player
       throttle: {
         level: @throttle_level,
         counter: @throttle_counter
-      }
+      },
+      atHurdle: detect_hurdle
     }
   end
 
@@ -98,11 +102,45 @@ class Player
 
     limit_levels
 
-    # TODO: coast needs to be aware of which direction player was last headed
+    if @at_hurdle
+      if @current_hurdle_path.nil?
+        @current_hurdle_path = @at_hurdle.paths[@throttle_level-1].clone #@throttle_level-1].clone
+      end
+    end
+
+    if !@current_hurdle_path.nil? && @current_hurdle_path.length > 0
+      point = @current_hurdle_path.shift()
+      #@position[:x] += point[:x]
+      @position[:y] = @@ground_pos_y + point[:y]
+    else
+      @current_hurdle_path = nil
+      @position[:y] = @@ground_pos_y
+    end
+
     @position[:x] += @throttle_level if coast
     @position[:x] += @throttle_level if right
     @position[:x] -= @throttle_level if left
 
+
+
+
+    # TODO: coast needs to be aware of which direction player was last headed
+
+
+  end
+
+  def detect_hurdle
+    hurdle = @game.track.hurdles.detect do |hurdle|
+      hurdle.position[:x] <= position[:x] && hurdle.position[:x] + hurdle.width >= position[:x]
+    end
+
+    if hurdle
+      @at_hurdle = hurdle
+      return hurdle.to_hash
+    else
+      @at_hurdle = false
+      return false
+    end
   end
 
   def send_message(message)

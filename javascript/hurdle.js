@@ -1,5 +1,4 @@
 var Hurdle = Class.extend({
-	spriteSheet: new Image(),
 	game: null,
 
 	init: function(game, settings) {
@@ -8,7 +7,6 @@ var Hurdle = Class.extend({
 		this.width 		= settings["width"];
     this.curves 	= settings["curves"];
     this.kind			= settings["kind"];
-    this.spriteSheet.onload = this.draw.bind(this);
 	},
 
 	update: function() {
@@ -31,12 +29,14 @@ var Hurdle = Class.extend({
 });
 
 var HurdleA = Hurdle.extend({
+	spriteSheet: new Image(),
 	init: function(game, settings) {
 		this.spriteSheet.src = "images/HurdleA.png";
 		this._super(game, settings);
 	},
 });
 var HurdleB = Hurdle.extend({
+	spriteSheet: new Image(),
 	init: function(game, settings) {
 		this.spriteSheet.src = "images/HurdleB.png";
 		this._super(game, settings);
