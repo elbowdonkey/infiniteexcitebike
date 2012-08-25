@@ -59,6 +59,10 @@ var WebsocketClient = Class.extend({
     if (data.advance) {
       this.game.update(data);
     }
+
+    if (data.remove) {
+      delete this.game.others[data.remove];
+    }
   },
 
   _onclose: function() {
