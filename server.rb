@@ -40,7 +40,10 @@ EM.run do
         end
       end
 
-      connection.onclose { puts "closed" }
+      connection.onclose do
+        game.remove_player(connection)
+      end
+
       connection.onerror { |e| puts "err #{e.inspect}" }
     end
 

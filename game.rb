@@ -14,7 +14,7 @@ class Game
   end
 
   def process_input(connection, message)
-    player = find_player(connection)
+    player = find_player_by_sig(connection.signature)
 
     case message["input"]
     when "right"
@@ -45,10 +45,25 @@ class Game
     #broadcast({:players => @players.collect {|p| p.to_hash }})
   end
 
-  def find_player(connection)
+  def find_player_by_client(client_id)
     return @players.detect do |p|
-      p.signature == connection.signature
+      p.client_id == client_id
     end
+  end
+
+  def find_player_by_sig(signature)
+    return @players.detect do |p|
+      p.signature == signature
+    end
+  end
+
+  def remove_player(connection)
+    player = find_player_by_sig(connection.signature)
+    @players.delete player
+    message = {
+      :remove => player.client_id
+    }
+    broadcast(message)
   end
 
   def broadcast(message)
