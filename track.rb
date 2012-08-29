@@ -1,10 +1,10 @@
 class Track
   attr_accessor :hurdles
   @@hurdle_types = [HurdleA, HurdleA]
-  @@minimum_hurdle_spacing = 500
-  @@start_pos = 130
+  @@minimum_hurdle_spacing = 200
+  @@start_pos = 100
 
-  def initialize(options={})
+  def initialize
   	@hurdles = []
   	spawn_starting_hurdles
   end
@@ -13,7 +13,6 @@ class Track
     position = {x: @@start_pos, y: -32} if @hurdles.length == 0
     position =  next_pos_hurdle_pos if @hurdles.length > 0
     hurdle_class = @@hurdle_types.sample
-    p hurdle_class
   	hurdle_class.new(position: position)
   end
 

@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.3.2)
+    coderay (1.0.7)
     cookiejar (0.3.0)
     daemons (1.1.9)
     em-http-request (1.0.3)
@@ -20,8 +21,14 @@ GEM
     json (1.5.1)
     macaddr (1.6.1)
       systemu (~> 2.5.0)
+    method_source (0.8)
     nokogiri (1.4.4)
+    pry (0.9.10)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.3.1)
     rack (1.4.1)
+    slop (3.3.2)
     systemu (2.5.2)
     thin (1.4.1)
       daemons (>= 1.0.9)
@@ -39,5 +46,6 @@ DEPENDENCIES
   eventmachine (~> 1.0.0.rc.4)
   json
   nokogiri
+  pry
   thin
   uuid (~> 2.3.5)

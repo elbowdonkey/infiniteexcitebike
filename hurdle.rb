@@ -30,7 +30,7 @@ class Hurdle
     apex_height = @height + airtime
     path = []
 
-    @height.times do |i|
+    @height.times do
       x += (@rise[0] * throttle_level)
       y += (@rise[1] * throttle_level)
       path << {x: x, y: y}

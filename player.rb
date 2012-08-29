@@ -1,3 +1,4 @@
+require 'pry'
 class Integer
   def limit(min,max)
     val = self
@@ -8,18 +9,18 @@ end
 
 class Player
   @@ground_pos_y = 240
-  attr_accessor :connection, :game, :client_id, :signature, :position, :clock, :lane,
+  attr_accessor :game, :connection, :client_id, :signature, :position, :lane,
                 :throttle_level, :throttle_counter, :throttle_steps,
                 :at_hurdle, :current_hurdle_path
 
   def initialize(options={})
-    @connection = options[:connection] || nil
     @game       = options[:game]
-    @signature  = @connection.signature
-    @position   = {x: 0, y: @@ground_pos_y}
-    @lane       = options[:lane] || 2
+    @connection = options[:connection]
     @client_id  = options[:client_id]
-    @clock      = 0
+
+    @position   = {x: 0, y: @@ground_pos_y}
+    @signature  = @connection.signature
+    @lane       = 2
     @at_hurdle  = false
 
     @throttle_level   = 0
@@ -27,20 +28,13 @@ class Player
     @throttle_steps   = [0,8,24,56,80]
   end
 
-  def to_hash
-    #@position = plot_circle # uncomment for fun!
-    {
-      game_id:   @game.object_id,
-      client_id: @client_id,
-      signature: @signature,
-      position:  @position,
-      lane:      @lane,
-      throttle: {
-        level: @throttle_level,
-        counter: @throttle_counter
-      },
-      atHurdle: detect_hurdle
-    }
+  def process_input(input)
+    apply_throttle if input == "right"
+    apply_brake    if input == "left"
+    coast          if input == "coast"
+
+    change_lanes :up   if input == "up"
+    change_lanes :down if input == "down"
   end
 
   def apply_throttle
@@ -96,7 +90,11 @@ class Player
       @throttle_counter += 1
     end
 
-    if left || coast
+    if left
+      @throttle_counter -= 2
+    end
+
+    if coast
       @throttle_counter -= 1
     end
 
@@ -104,13 +102,18 @@ class Player
 
     if @at_hurdle
       if @current_hurdle_path.nil?
-        @current_hurdle_path = @at_hurdle.paths[@throttle_level-1].clone #@throttle_level-1].clone
+        #begin
+          path_index = @throttle_level-1
+          path_index = 3 if path_index > 3
+          @current_hurdle_path = @at_hurdle.paths[path_index].clone
+        #rescue
+        #  binding.pry
+        #end
       end
     end
 
     if !@current_hurdle_path.nil? && @current_hurdle_path.length > 0
       point = @current_hurdle_path.shift()
-      #@position[:x] += point[:x]
       @position[:y] = @@ground_pos_y + point[:y]
     else
       @current_hurdle_path = nil
@@ -119,14 +122,6 @@ class Player
 
     @position[:x] += @throttle_level if coast
     @position[:x] += @throttle_level if right
-    @position[:x] -= @throttle_level if left
-
-
-
-
-    # TODO: coast needs to be aware of which direction player was last headed
-
-
   end
 
   def detect_hurdle
@@ -143,21 +138,22 @@ class Player
     end
   end
 
-  def send_message(message)
-    connection.send(message.to_json)
+  def to_hash
+    {
+      game_id:   @game.object_id,
+      client_id: @client_id,
+      signature: @signature,
+      position:  @position,
+      lane:      @lane,
+      throttle: {
+        level: @throttle_level,
+        counter: @throttle_counter
+      },
+      atHurdle: detect_hurdle
+    }
   end
 
-  def plot_circle
-    cx    = 640/2
-    cy    = 480/2
-    rad   = 150
-    speed = 2
-    scale = (0.001*2*Math::PI)/speed
-
-    a = @clock * scale
-    x = cx + Math.sin(a) * rad
-    y = cy + Math.cos(a) * rad
-
-    {:x => x, :y => y}
+  def send_message(message)
+    connection.send(message.to_json)
   end
 end
