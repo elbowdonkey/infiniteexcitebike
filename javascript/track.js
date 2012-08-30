@@ -1,6 +1,9 @@
 var Track = Class.extend({
-	init: function() {
+	width: null,
 
+	init: function(game, settings) {
+		this.game = game;
+		this.width = settings.width;
 	},
 
 	update: function() {

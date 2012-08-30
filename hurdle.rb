@@ -71,18 +71,22 @@ class HurdleB < Hurdle
   end
 end
 
-# class BezierPoint
-#   def self.create(bump_1_x, bump_1_y, pull_1_x, pull_1_y, pull_2_x, pull_2_y, bump_2_x, bump_2_y)
-#     [
-#       {
-#        bump: {x: bump_1_x, y: bump_1_y}
-#       },
-#       {
-#         pull1: {x: pull_1_x, y: pull_1_y},
-#         pull2: {x: pull_2_x, y: pull_2_y},
-#         bump: {x: bump_2_x, y: bump_2_y},
-#         inc: 0.04
-#       }
-#     ]
-#   end
-# end
+class HurdleC < Hurdle
+  def initialize(options={})
+    @rise = [1,-1]
+    @width = 72
+    @height = 32
+
+    super(options)
+  end
+end
+
+class HurdleD < Hurdle
+  def initialize(options={})
+    @rise = [2,-1]
+    @width = 72
+    @height = 17
+
+    super(options)
+  end
+end

@@ -13,17 +13,17 @@ var Input = Class.extend({
   locks: {},
   delayedKeyup: {},
   isUsingKeyboard: false,
-  
+
   initKeyboard: function() {
     if( this.isUsingKeyboard ) { return; }
     this.isUsingKeyboard = true;
     window.addEventListener('keydown', this.keydown.bind(this), false );
     window.addEventListener('keyup', this.keyup.bind(this), false );
   },
-  
+
   keydown: function( event ) {
     if( event.target.type == 'text' ) { return; }
-    
+
     var code = event.keyCode
     var action = this.bindings[code];
     if( action ) {
@@ -36,10 +36,10 @@ var Input = Class.extend({
       event.preventDefault();
     }
   },
-  
+
   keyup: function( event ) {
     if( event.target.type == 'text' ) { return; }
-    
+
     var code = event.keyCode
     var action = this.bindings[code];
     if( action ) {
@@ -48,31 +48,34 @@ var Input = Class.extend({
       event.preventDefault();
     }
   },
-  
+
   bind: function( key, action ) {
     if( key > 0 ) { this.initKeyboard(); }
     this.bindings[key] = action;
   },
-  
+
   unbind: function( key ) {
     var action = this.bindings[key];
     this.delayedKeyup[action] = true;
     this.bindings[key] = null;
   },
-  
+
   state: function( action ) {
     return this.actions[action];
   },
-  
-  
+
+  which: function() {
+    console.log(this.presses);
+  },
+
   pressed: function( action ) {
     return this.presses[action];
   },
-  
+
   released: function( action ) {
     return this.delayedKeyup[action];
   },
-    
+
   clearPressed: function() {
     for( var action in this.delayedKeyup ) {
       this.actions[action] = false;

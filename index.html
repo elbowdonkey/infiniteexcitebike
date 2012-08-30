@@ -9,19 +9,8 @@
     </style>
 
     <script src='/javascript/jquery-1.7.1.js'></script>
+    <script type="text/javascript" src='javascript/extensions.js'></script>
     <script type="text/javascript" src='javascript/simple_inheritance.js'></script>
-
-    <script type="text/javascript">
-      Function.prototype.bind = function(){
-        var fn = this, args = Array.prototype.slice.call(arguments),
-          object = args.shift();
-        return function(){
-          return fn.apply(object,
-            args.concat(Array.prototype.slice.call(arguments)));
-        };
-      };
-    </script>
-
     <script type="text/javascript" src='javascript/websocket-client.js'></script>
     <script type="text/javascript" src='javascript/input.js'></script>
     <script type="text/javascript" src='javascript/game.js'></script>

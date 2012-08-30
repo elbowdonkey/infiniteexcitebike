@@ -1,12 +1,14 @@
 class Track
-  attr_accessor :hurdles
-  @@hurdle_types = [HurdleA, HurdleA]
+  attr_accessor :hurdles, :width
+
+  @@hurdle_types = [HurdleA, HurdleB, HurdleC, HurdleD]
   @@minimum_hurdle_spacing = 200
   @@start_pos = 100
 
   def initialize
   	@hurdles = []
   	spawn_starting_hurdles
+    @width = @hurdles.last.position[:x] + @hurdles.last.width
   end
 
   def spawn_random_hurdle
@@ -23,9 +25,10 @@ class Track
   end
 
   def next_pos_hurdle_pos
+    random_spacing = rand(100)
     last_hurdle = @hurdles.last
     {
-      x: last_hurdle.position[:x] + last_hurdle.width + @@minimum_hurdle_spacing,
+      x: last_hurdle.position[:x] + last_hurdle.width + @@minimum_hurdle_spacing + random_spacing,
       y: last_hurdle.position[:y]
     }
   end

@@ -2,6 +2,7 @@ var Game = Class.extend({
   background: new Image(),
   others: {},
   track: {hurdles: {}},
+  trackWidth: null,
 
   init: function() {
     this.canvas = $('#game');
@@ -28,6 +29,12 @@ var Game = Class.extend({
   update: function(serverData) {
     if (this.input.state('jump')) console.log('jump!');
     this.input.clearPressed();
+
+    if (this.player) {
+      this.screen.scroll.x = this.player.position.x - this.screen.width/2;
+    }
+
+    this.trackWidth = serverData.game.track.width;
 
     this.updateEntities(serverData);
     this.draw();
@@ -93,7 +100,14 @@ var Game = Class.extend({
     this.player.draw();
   },
 
+  setScreenPos: function( x, y ) {
+    this.screen.scroll.x = x;
+    this.screen.scroll.y = y;
+  },
+
   drawBg: function() {
+    this.setScreenPos(this.screen.scroll.x, this.screen.scroll.y);
+
     var spriteX = 0;
     var spriteY = 0;
     var spriteWidth = 32;
@@ -104,13 +118,26 @@ var Game = Class.extend({
     var destinationHeight = spriteHeight;
     var repeatCount = this.screen.width/spriteWidth;
 
-    // if (offset.x % spriteWidth == 0) {
-    //   this.screen.scroll.x += 1;
-    // }
+    var tileOffsetX = (this.screen.scroll.x / spriteWidth).toInt();
+    var pxOffsetX = this.screen.scroll.x % spriteWidth;
+    var pxMinX = -pxOffsetX - spriteWidth;
+    var pxMaxX = this.screen.width + spriteWidth - pxOffsetX;
 
-    for (var x = 0; x < repeatCount; x++) {
-      destinationX = (spriteWidth * x); // - offset.x;
-      this.context.drawImage(this.background, spriteX, spriteY, spriteWidth, spriteHeight, destinationX, destinationY, destinationWidth, destinationHeight);
-    };
+    var drawPos = function( p ) { return Math.round(p); }
+
+    for( var mapX = -1, pxX = pxMinX; pxX < pxMaxX; mapX++, pxX += spriteWidth) {
+      var tileX = mapX + tileOffsetX;
+      this.context.drawImage(
+        this.background,
+        spriteX,
+        spriteY,
+        spriteWidth,
+        spriteHeight,
+        drawPos(pxX),
+        destinationY,
+        destinationWidth,
+        destinationHeight
+      );
+    }
   }
 });

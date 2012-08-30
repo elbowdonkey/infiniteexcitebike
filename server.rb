@@ -15,6 +15,7 @@ require_relative 'hurdle.rb'
 require_relative 'track.rb'
 require_relative 'player.rb'
 
+#host = '192.168.14.115'
 host = '0.0.0.0'
 opts = {
   host: host,

@@ -1,7 +1,8 @@
 var WebsocketClient = Class.extend({
   player: null,
   init: function() {
-    this.connection = new WebSocket("ws://0.0.0.0:9000/");
+    var wsHost = "ws://" + document.location.host.split(":")[0] + ":9000/";
+    this.connection = new WebSocket(wsHost);
     this.connection.onopen = this._onopen.bind(this);
     this.connection.onerror = this._onerror.bind(this);
     this.connection.onmessage = this._onmessage.bind(this);

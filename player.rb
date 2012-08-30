@@ -58,6 +58,7 @@ class Player
   end
 
   def change_lanes(direction)
+    puts direction
     @lane -= 1 if direction == :up
     @lane += 1 if direction == :down
     @lane = 0  if @lane < 0
@@ -122,6 +123,15 @@ class Player
 
     @position[:x] += @throttle_level if coast
     @position[:x] += @throttle_level if right
+
+    wrap_world
+  end
+
+  def wrap_world
+    distance_to_end = @game.track.width - @position[:x]
+    if distance_to_end <= -960
+      @position[:x] = 0
+    end
   end
 
   def detect_hurdle

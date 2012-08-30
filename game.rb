@@ -16,7 +16,10 @@ class Game
         :advance => true,
         :game => {
           :players => players_to_hash,
-          :hurdles => track.hurdles_to_hash
+          :hurdles => track.hurdles_to_hash,
+          :track => {
+            :width => track.width
+          }
         }
       )
     end

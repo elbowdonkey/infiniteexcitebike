@@ -24,6 +24,8 @@ var Hurdle = Class.extend({
     var destinationWidth = spriteWidth * 2;
     var destinationHeight = spriteHeight * 2;
 
+    destinationX = this.position.x - this.game.screen.scroll.x;
+
     this.game.context.drawImage(this.spriteSheet, spriteX, spriteY, spriteWidth, spriteHeight, destinationX, destinationY, destinationWidth, destinationHeight);
   },
 });
@@ -35,10 +37,27 @@ var HurdleA = Hurdle.extend({
 		this._super(game, settings);
 	},
 });
+
 var HurdleB = Hurdle.extend({
 	spriteSheet: new Image(),
 	init: function(game, settings) {
 		this.spriteSheet.src = "images/HurdleB.png";
+		this._super(game, settings);
+	},
+});
+
+var HurdleC = Hurdle.extend({
+	spriteSheet: new Image(),
+	init: function(game, settings) {
+		this.spriteSheet.src = "images/HurdleC.png";
+		this._super(game, settings);
+	},
+});
+
+var HurdleD = Hurdle.extend({
+	spriteSheet: new Image(),
+	init: function(game, settings) {
+		this.spriteSheet.src = "images/HurdleD.png";
 		this._super(game, settings);
 	},
 });
