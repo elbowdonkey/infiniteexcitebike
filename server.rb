@@ -27,6 +27,7 @@ EM.run do
 
   EM.start_server(host, 3000, ContentHandler)
 
+
   EM::WebSocket.start(opts) do |conn|
     conn.onopen    { game.add_player conn }
     conn.onmessage {|m| game.process_input(conn, m) }

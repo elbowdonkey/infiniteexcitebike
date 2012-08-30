@@ -29,6 +29,7 @@ class Game
     message = JSON.parse(message)
     player = find_player connection
     player.process_input message["input"]
+
     succeed(player.to_hash)
   end
 
