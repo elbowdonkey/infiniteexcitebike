@@ -9,3 +9,7 @@ Function.prototype.bind = function(){
 Number.prototype.toInt = function() {
   return (this | 0);
 };
+
+Array.prototype.random = function() {
+	return this[ Math.floor(Math.random() * this.length) ];
+};

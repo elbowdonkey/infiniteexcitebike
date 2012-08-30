@@ -3,7 +3,8 @@ var OtherPlayer = Player.extend({
 
   init: function(game, settings) {
     this._super(game, settings);
-    this.spriteSheet.src = "images/bikes_green.png";
+    var sprite_color = Math.round(Math.random() * 11) -1;
+    this.spriteSheet.src = "images/bikes_" + sprite_color + ".png";
   },
 
   update: function(serverData) {
