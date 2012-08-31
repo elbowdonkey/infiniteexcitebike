@@ -58,7 +58,6 @@ class Player
   end
 
   def change_lanes(direction)
-    puts direction
     @lane -= 1 if direction == :up
     @lane += 1 if direction == :down
     @lane = 0  if @lane < 0
