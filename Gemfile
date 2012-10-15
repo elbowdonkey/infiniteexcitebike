@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem "pry"
 gem "eventmachine",    "~> 1.0.0.rc.4"
 gem "em-websocket",    "0.3.8"
 gem "em-http-request", "1.0.3"

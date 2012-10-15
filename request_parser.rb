@@ -1,33 +1,25 @@
+# request_parser.rb
+# Originally provided by Nils Franzén:
+# http://www.franzens.org/2011/10/writing-minimalistic-web-server-using.html
+
 require 'thin_parser'
 require 'stringio'
- 
-# Freeze some HTTP header names & values
+
 HTTP_VERSION      = 'HTTP_VERSION'.freeze
 HTTP_1_0          = 'HTTP/1.0'.freeze
 CONTENT_LENGTH    = 'CONTENT_LENGTH'.freeze
 CONNECTION        = 'HTTP_CONNECTION'.freeze
 KEEP_ALIVE_REGEXP = /\bkeep-alive\b/i.freeze
 CLOSE_REGEXP      = /\bclose\b/i.freeze
- 
-# Freeze some Rack header names
 RACK_INPUT        = 'rack.input'.freeze
- 
-# A request sent by the client to the server.
+
 class RequestParser
-  INITIAL_BODY      = ''
- 
+  INITIAL_BODY    = ''
+
   # Force external_encoding of request's body to ASCII_8BIT
   INITIAL_BODY.encode!(Encoding::ASCII_8BIT) if INITIAL_BODY.respond_to?(:encode!)
- 
-  # CGI-like request environment variables
-  attr_reader :env
- 
-  # Unparsed data of the request
-  attr_reader :data
- 
-  # Request body
-  attr_reader :body
- 
+  attr_reader :env, :data, :body
+
   def initialize
     @parser   = Thin::HttpParser.new
     @data     = ''
@@ -37,7 +29,7 @@ class RequestParser
       RACK_INPUT        => @body,
     }
   end
- 
+
   # Parse a chunk of data into the request environment
   # Returns +true+ if the parsing is complete.
   def parse(data)
@@ -47,7 +39,7 @@ class RequestParser
       @data << data
       @nparsed = @parser.execute(@env, @data, @nparsed)
     end
- 
+
     if finished?   # Check if header and body are complete
       @data = nil
       @body.rewind
@@ -56,17 +48,17 @@ class RequestParser
       false        # Not finished, need more data
     end
   end
- 
+
   # +true+ if headers and body are finished parsing
   def finished?
     @parser.finished? && @body.size >= content_length
   end
- 
+
   # Expected size of the body
   def content_length
     @env[CONTENT_LENGTH].to_i
   end
- 
+
   # Returns +true+ if the client expect the connection to be persistent.
   def persistent?
     # Clients and servers SHOULD NOT assume that a persistent connection
@@ -74,7 +66,7 @@ class RequestParser
     # signaled. (http://www.w3.org/Protocols/rfc2616/rfc2616-sec8.html)
     if @env[HTTP_VERSION] == HTTP_1_0
       @env[CONNECTION] =~ KEEP_ALIVE_REGEXP
- 
+
     # HTTP/1.1 client intends to maintain a persistent connection unless
     # a Connection header including the connection-token "close" was sent
     # in the request

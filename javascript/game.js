@@ -1,14 +1,16 @@
 var Game = Class.extend({
   background: new Image(),
   others: {},
-  offset: {x: 0, y: 0},
-  serverQueue: [],
-  clock: null,
+  track: {hurdles: {}},
+  trackWidth: null,
 
   init: function() {
     this.canvas = $('#game');
     this.context = this.canvas[0].getContext("2d");
     this.context.webkitImageSmoothingEnabled = false;
+
+
+    this.background.onload = this.drawBg.bind(this);
 
     this.screen = {
       width: this.canvas.width(),
@@ -20,62 +22,47 @@ var Game = Class.extend({
     }
 
     this.background.src = "images/bg.png";
-
-    this.clock = setInterval( this.processQueue.bind(this), 500 );
-  },
-
-  processQueue: function() {
-    var data;
-
-    if (this.player == undefined) {
-      // grab the first message with our client_id
-      data = this.serverQueue.shift();
-    } else {
-      // grab the newest message
-      data = this.serverQueue.pop();
-    }
-    
-    if (data) {
-      if (data.client_id) {
-        this.setupPlayer(data);
-        return;
-      }
-    } else {
-      //clearInterval(this.clock);
-    }
-
-    this.update(data);
+    this.input = new Input();
+    this.input.bind( KEY.UP_ARROW, 'jump' );
   },
 
   update: function(serverData) {
-    if (serverData) {
-      console.log(serverData);
-      this.player.update(this.getPlayerData(serverData));
-      this.addOthers(serverData);
-      this.updateOthers(serverData);
-    } else {
-      this.player.update();
+    if (this.input.state('jump')) console.log('jump!');
+    this.input.clearPressed();
+
+    if (this.player) {
+      this.screen.scroll.x = this.player.position.x - this.screen.width/2;
     }
 
-    this.clear();
-    //this.drawBg();
-    this.player.draw();
-    this.drawOthers();
+    this.trackWidth = serverData.game.track.width;
+
+    this.updateEntities(serverData);
     this.draw();
+  },
+
+  updateEntities: function(serverData) {
+    this.player.update(this.getPlayerData(serverData));
+    this.addOthers(serverData);
+    this.addHurdles(serverData);
+    this.updateOthers(serverData);
   },
 
   clear: function() {
     this.context.clearRect(0, 0, this.screen.width, this.screen.height);
   },
 
-  setupPlayer: function(settings) {
-    if (this.player == null && settings.client_id != undefined) {
-      this.player = new Player(this,settings);
-    }
-  },
-
   getPlayerData: function(serverData) {
     return serverData.game.players[this.player.client_id];
+  },
+
+  addHurdles: function(serverData) {
+    for (hurdle_id in serverData.game.hurdles) {
+      if (this.track.hurdles[hurdle_id] == undefined) {
+        var hurdle_deets = serverData.game.hurdles[hurdle_id];
+        var hurdleKind = eval(hurdle_deets["kind"])
+        this.track.hurdles[hurdle_id] = new hurdleKind(this, hurdle_deets);
+      }
+    }
   },
 
   addOthers: function(serverData) {
@@ -93,6 +80,12 @@ var Game = Class.extend({
     }
   },
 
+  drawHurdles: function() {
+    for (hurdle_id in this.track.hurdles) {
+      this.track.hurdles[hurdle_id].draw();
+    }
+  },
+
   drawOthers: function() {
     for (other_client_id in this.others) {
       this.others[other_client_id].draw();
@@ -100,22 +93,21 @@ var Game = Class.extend({
   },
 
   draw: function() {
-    //this.drawBg();
+    this.clear();
+    this.drawBg();
+    this.drawHurdles();
+    this.drawOthers();
+    this.player.draw();
+  },
+
+  setScreenPos: function( x, y ) {
+    this.screen.scroll.x = x;
+    this.screen.scroll.y = y;
   },
 
   drawBg: function() {
-    this.clear();
-    var pattern = this.context.createPattern(this.background,'repeat-x');
-    this.context.fillStyle = pattern;
-    this.context.fillRect(0,0,640,352);
-    this.context.translate(-this.offset.x, 0);
+    this.setScreenPos(this.screen.scroll.x, this.screen.scroll.y);
 
-    // var imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
-    // var data = imageData.data;
-    // this.context.putImageData(imageData, -this.offset.x, 0);
-  },
-
-  x_drawBg: function() {
     var spriteX = 0;
     var spriteY = 0;
     var spriteWidth = 32;
@@ -126,13 +118,26 @@ var Game = Class.extend({
     var destinationHeight = spriteHeight;
     var repeatCount = this.screen.width/spriteWidth;
 
-    // if (offset.x % spriteWidth == 0) {
-    //   this.screen.scroll.x += 1;
-    // }
+    var tileOffsetX = (this.screen.scroll.x / spriteWidth).toInt();
+    var pxOffsetX = this.screen.scroll.x % spriteWidth;
+    var pxMinX = -pxOffsetX - spriteWidth;
+    var pxMaxX = this.screen.width + spriteWidth - pxOffsetX;
 
-    for (var x = 0; x < repeatCount; x++) {
-      destinationX = (spriteWidth * x); // - offset.x;
-      this.context.drawImage(this.background, spriteX, spriteY, spriteWidth, spriteHeight, destinationX, destinationY, destinationWidth, destinationHeight);
-    };
+    var drawPos = function( p ) { return Math.round(p); }
+
+    for( var mapX = -1, pxX = pxMinX; pxX < pxMaxX; mapX++, pxX += spriteWidth) {
+      var tileX = mapX + tileOffsetX;
+      this.context.drawImage(
+        this.background,
+        spriteX,
+        spriteY,
+        spriteWidth,
+        spriteHeight,
+        drawPos(pxX),
+        destinationY,
+        destinationWidth,
+        destinationHeight
+      );
+    }
   }
 });
