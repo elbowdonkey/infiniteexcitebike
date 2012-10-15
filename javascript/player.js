@@ -9,7 +9,9 @@ var Player = Class.extend({
 
   init: function(game, settings) {
 
-    this.spriteSheet.src = "images/bikes2.png";
+    var sprite_color = settings.color;
+    this.spriteSheet.src = "images/bikes_" + sprite_color + ".png";
+
     this.spriteSheet.onload = this.draw.bind(this);
     this.animFrame = 0;
 

@@ -11,7 +11,7 @@ class Player
   @@ground_pos_y = 240
   attr_accessor :game, :connection, :client_id, :signature, :position, :lane,
                 :throttle_level, :throttle_counter, :throttle_steps,
-                :at_hurdle, :current_hurdle_path
+                :at_hurdle, :current_hurdle_path, :color
 
   def initialize(options={})
     @game       = options[:game]
@@ -26,6 +26,8 @@ class Player
     @throttle_level   = 0
     @throttle_counter = 0
     @throttle_steps   = [0,8,24,56,80]
+
+    @color = ((rand * 11) -1).round
   end
 
   def process_input(input)
@@ -152,6 +154,7 @@ class Player
       game_id:   @game.object_id,
       client_id: @client_id,
       signature: @signature,
+      color:     @color,
       position:  @position,
       lane:      @lane,
       throttle: {
