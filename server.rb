@@ -27,7 +27,18 @@ EM.run do
     get '*' do
       path = params[:splat][0]
       path = "/index.html" if path == "/"
-      #"#{path}"
+
+      file_ext = path.split(".").last
+
+      case file_ext
+      when "js"
+        content_type "application/javascript"
+      when "png"
+        content_type "image/png"
+      when "html"
+        content_type "text/html"
+      end
+
       File.open("." + path, "r").read
     end
   end
