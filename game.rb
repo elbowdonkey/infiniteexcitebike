@@ -1,18 +1,20 @@
 class Game
   include EM::Deferrable
+  # http://eventmachine.rubyforge.org/EventMachine/Deferrable.html
   @@frame_length = 0.0167
-  attr_accessor :players, :connections, :track
+  attr_accessor :players, :connections, :track, :broker
 
-  def initialize
+  def initialize(broker)
+    @broker      = broker
     @connections = []
     @players     = []
     @track       = Track.new
-    setup_timer
+    #setup_timer
   end
 
   def setup_timer
     EM.add_periodic_timer(@@frame_length) do
-      broadcast(
+      @broker.broadcast(
         :advance => true,
         :game => {
           :players => players_to_hash,
